@@ -14,128 +14,114 @@
   --text:   var(--tg-theme-text-color,          #f5f5f5);
   --hint:   var(--tg-theme-hint-color,          #708499);
   --accent: var(--tg-theme-button-color,        #5288c1);
-  --sep:    rgba(255,255,255,0.07);
-  --r: 14px;
+  --r: 16px;
 }
 
 html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
+  height: 100%; background: var(--bg); color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   overflow: hidden;
 }
 
 .app {
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   height: 100%;
-  padding: 12px 12px calc(env(safe-area-inset-bottom) + 70px);
-  gap: 10px;
-  overflow-y: auto;
+  padding: 10px 10px calc(env(safe-area-inset-bottom) + 68px);
+  gap: 8px; overflow-y: auto;
 }
+
+/* ── Превью изображения ── */
+.preview {
+  flex-shrink: 0;
+  border-radius: var(--r);
+  background: var(--bg2);
+  overflow: hidden;
+  position: relative;
+  /* портретный формат как в мокапе */
+  aspect-ratio: 2/3;
+  max-height: 44vh;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.preview img {
+  width: 100%; height: 100%; object-fit: contain;
+  position: absolute; inset: 0;
+  opacity: 0; transition: opacity .4s;
+}
+.preview img.show { opacity: 1; }
+
+.preview-placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--hint); font-size: 14px; text-align: center; padding: 20px;
+  user-select: none; transition: opacity .3s;
+}
+.preview-placeholder .ico { font-size: 44px; opacity: .4; }
+
+/* статус поверх превью */
+.preview-status {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; background: rgba(0,0,0,.55); backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+  border-radius: var(--r);
+}
+.preview-status.show { opacity: 1; }
+.preview-status .s-icon { font-size: 42px; }
+.preview-status .s-text { font-size: 15px; color: #fff; font-weight: 600; text-align: center; padding: 0 20px; }
+.spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.2); border-top-color: #fff;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── История ── */
 .history-wrap { flex-shrink: 0; }
-
 .section-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--hint);
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: 7px;
+  font-size: 11px; font-weight: 600; color: var(--hint);
+  letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px;
 }
-
 .chips {
-  display: flex;
-  gap: 7px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 2px;
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
 }
 .chips::-webkit-scrollbar { display: none; }
-
 .chip {
-  flex-shrink: 0;
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background: var(--bg2);
-  color: var(--text);
-  border: none;
-  border-radius: 20px;
-  padding: 5px 13px;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition: opacity .15s, transform .1s;
+  flex-shrink: 0; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: var(--bg2); color: var(--text); border: none; border-radius: 20px;
+  padding: 5px 12px; font-size: 12px; cursor: pointer; transition: opacity .15s, transform .1s;
 }
-.chip:active { opacity: .7; transform: scale(.96); }
+.chip:active { opacity: .7; transform: scale(.95); }
 
-/* ── Поля ввода ── */
-.fields { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-
-.field { display: flex; flex-direction: column; gap: 5px; }
-
-.field-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--hint);
-  letter-spacing: .5px;
-  text-transform: uppercase;
-}
-
+/* ── Поля ── */
+.fields { display: flex; flex-direction: column; gap: 7px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field-label { font-size: 11px; font-weight: 600; color: var(--hint); letter-spacing: .5px; text-transform: uppercase; }
 .field textarea {
-  background: var(--bg2);
-  border: 1.5px solid transparent;
-  border-radius: var(--r);
-  padding: 11px 13px;
-  color: var(--text);
-  font-size: 15px;
-  line-height: 1.45;
-  resize: none;
-  outline: none;
-  font-family: inherit;
-  transition: border-color .2s;
+  background: var(--bg2); border: 1.5px solid transparent; border-radius: var(--r);
+  padding: 10px 12px; color: var(--text); font-size: 15px; line-height: 1.4;
+  resize: none; outline: none; font-family: inherit; transition: border-color .2s;
 }
 .field textarea:focus { border-color: var(--accent); }
 .field textarea::placeholder { color: var(--hint); }
-
-#prompt   { min-height: 100px; }
-#negative { min-height: 70px; }
-
-/* ── Счётчики символов ── */
-.char-count {
-  font-size: 11px;
-  color: var(--hint);
-  text-align: right;
-  margin-top: -2px;
-}
-
-/* ── Статус отправки ── */
-.status {
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 76px);
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: rgba(0,0,0,.85);
-  backdrop-filter: blur(8px);
-  color: #fff;
-  padding: 9px 20px;
-  border-radius: 24px;
-  font-size: 14px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .25s, transform .25s;
-  pointer-events: none;
-  z-index: 100;
-}
-.status.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#prompt   { min-height: 72px; }
+#negative { min-height: 54px; }
 </style>
 </head>
 <body>
 <div class="app">
+
+  <!-- Превью -->
+  <div class="preview" id="preview">
+    <img id="last-img" alt="">
+    <div class="preview-placeholder" id="placeholder">
+      <div class="ico">🖼</div>
+      <div>тут будет<br>итоговое изображение</div>
+    </div>
+    <div class="preview-status" id="status">
+      <div class="s-icon" id="s-icon">⏳</div>
+      <div class="s-text" id="s-text">Отправляю…</div>
+    </div>
+  </div>
 
   <!-- История -->
   <div class="history-wrap" id="history-wrap" style="display:none">
@@ -147,105 +133,110 @@ html, body {
   <div class="fields">
     <div class="field">
       <div class="field-label">Промпт</div>
-      <textarea id="prompt" placeholder="Опиши изображение…" rows="4"></textarea>
-      <div class="char-count"><span id="pc">0</span> симв.</div>
+      <textarea id="prompt" placeholder="Опиши изображение…" rows="3"></textarea>
     </div>
     <div class="field">
       <div class="field-label">Негативный промпт</div>
-      <textarea id="negative" placeholder="Что не должно быть на картинке…" rows="3"></textarea>
-      <div class="char-count"><span id="nc">0</span> симв.</div>
+      <textarea id="negative" placeholder="Что не должно быть…" rows="2"></textarea>
     </div>
   </div>
 
 </div>
-
-<div class="status" id="status">✅ Отправлено! Жди результат в чате</div>
-
 <script>
-// ─── Telegram WebApp ───────────────────────────────────────────────
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
 const promptEl   = document.getElementById('prompt');
-const negativeEl = document.getElementById('negative');
+const negEl      = document.getElementById('negative');
 const statusEl   = document.getElementById('status');
+const sIconEl    = document.getElementById('s-icon');
+const sTextEl    = document.getElementById('s-text');
+const lastImgEl  = document.getElementById('last-img');
+const placeholder = document.getElementById('placeholder');
 const histWrap   = document.getElementById('history-wrap');
 const chipsEl    = document.getElementById('chips');
 
-// ─── Счётчик символов ─────────────────────────────────────────────
-promptEl.addEventListener('input', () => {
-  document.getElementById('pc').textContent = promptEl.value.length;
-});
-negativeEl.addEventListener('input', () => {
-  document.getElementById('nc').textContent = negativeEl.value.length;
-});
+// ── последнее изображение из URL-параметра или localStorage ───────
+function showLastImage(src) {
+  if (!src) return;
+  lastImgEl.src = src;
+  lastImgEl.onload = () => {
+    lastImgEl.classList.add('show');
+    placeholder.style.opacity = '0';
+  };
+  localStorage.setItem('cg_last_img', src);
+}
 
-// ─── История (localStorage) ───────────────────────────────────────
-const HIST_KEY  = 'comfygen_history';
-const MAX_HIST  = 8;
+const params  = new URLSearchParams(window.location.search);
+const imgParam = params.get('img');
+showLastImage(imgParam || localStorage.getItem('cg_last_img'));
+
+// ── История ───────────────────────────────────────────────────────
+const HIST_KEY = 'cg_history';
 
 function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
-  catch { return []; }
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
 }
-
-function saveHistory(positive, negative) {
-  let hist = loadHistory();
-  const entry = { positive, negative };
-  hist = hist.filter(h => h.positive !== positive);
-  hist.unshift(entry);
-  hist = hist.slice(0, MAX_HIST);
-  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+function saveHistory(pos, neg) {
+  let h = loadHistory().filter(x => x.p !== pos);
+  h.unshift({ p: pos, n: neg });
+  localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 8)));
 }
-
 function renderHistory() {
-  const hist = loadHistory();
-  if (!hist.length) { histWrap.style.display = 'none'; return; }
+  const h = loadHistory();
+  if (!h.length) { histWrap.style.display = 'none'; return; }
   histWrap.style.display = '';
   chipsEl.innerHTML = '';
-  hist.forEach(h => {
+  h.forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'chip';
-    btn.textContent = h.positive;
-    btn.title = `➕ ${h.positive}\n➖ ${h.negative || '—'}`;
+    btn.textContent = item.p;
     btn.onclick = () => {
-      promptEl.value   = h.positive;
-      negativeEl.value = h.negative || '';
-      document.getElementById('pc').textContent = promptEl.value.length;
-      document.getElementById('nc').textContent = negativeEl.value.length;
+      promptEl.value = item.p;
+      negEl.value    = item.n || '';
       promptEl.focus();
       tg?.HapticFeedback?.selectionChanged();
     };
     chipsEl.appendChild(btn);
   });
 }
-
 renderHistory();
 
-// ─── Telegram Main Button ─────────────────────────────────────────
+// ── Telegram MainButton ───────────────────────────────────────────
 if (tg) {
   tg.MainButton.setText('🎨 Начать генерацию');
   tg.MainButton.show();
 
-  tg.MainButton.onClick(() => {
+  tg.MainButton.onClick(async () => {
     const positive = promptEl.value.trim();
-    const negative = negativeEl.value.trim();
+    const negative = negEl.value.trim();
+    if (!positive) { tg.showAlert('Введи промпт!'); return; }
 
-    if (!positive) {
-      tg.showAlert('Введи промпт!');
-      return;
-    }
+    tg.MainButton.disable();
+    tg.HapticFeedback?.impactOccurred('medium');
+
+    // Показываем "Отправляю..."
+    sIconEl.textContent = '';
+    sIconEl.innerHTML = '<div class="spinner"></div>';
+    sTextEl.textContent = 'Отправляю…';
+    statusEl.classList.add('show');
+
+    await sleep(600);
 
     saveHistory(positive, negative);
-    tg.HapticFeedback?.notificationOccurred('success');
+    renderHistory();
 
-    // показываем статус на секунду перед закрытием
-    statusEl.classList.add('show');
-    setTimeout(() => {
-      tg.sendData(JSON.stringify({ positive, negative }));
-    }, 600);
+    // Показываем "Отправлено!"
+    sIconEl.innerHTML = '✅';
+    sTextEl.textContent = 'Отправлено!\nЖди результат в чате';
+
+    await sleep(900);
+
+    tg.sendData(JSON.stringify({ positive, negative }));
   });
 }
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
